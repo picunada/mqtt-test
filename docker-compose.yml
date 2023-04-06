@@ -1,0 +1,32 @@
+version: '3'
+
+services:
+  app:
+    image: static-app
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: deploy-node
+    container_name: 'app'
+    ports:
+      - 5173:3000
+    networks:
+      - fullstack
+  mqtt:
+    image: 'eclipse-mosquitto'
+    container_name: 'mqtt'
+    command: mosquitto -c /config/mosquitto.conf
+    ports:
+      - 8080:8080
+    networks:
+      - fullstack
+    volumes:
+      - ./config:/config
+
+volumes:
+  config:
+
+networks:
+  fullstack:
+    driver: bridge
+

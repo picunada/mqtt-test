@@ -5,5 +5,10 @@ export default defineConfig({
 	plugins: [sveltekit()],
 	test: {
 		include: ['src/**/*.{test,spec}.{js,ts}']
-	}
+	},
+	resolve: {
+		alias: {
+		mqtt: "/node_modules/mqtt/dist/mqtt.min.js",
+		},
+		},
 });
