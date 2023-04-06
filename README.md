@@ -1,8 +1,10 @@
 ## Run
-Open http://localhost:5137
+Run in terminal to sratup docker containers with MQTT service and App service
 ```bash
 docker compose up
 ```
+
+Open http://localhost:5137 to test
 
 ## Developing
 
