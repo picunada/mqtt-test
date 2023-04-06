@@ -50,7 +50,7 @@
       if (!$power) {
         $power = 1
       }
-    }, 1000)
+    }, 2000)
   })
 
   onDestroy(() => {
