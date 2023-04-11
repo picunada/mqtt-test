@@ -12,16 +12,16 @@ services:
       - 5173:3000
     networks:
       - fullstack
-  mqtt:
-    image: 'eclipse-mosquitto'
-    container_name: 'mqtt'
-    command: mosquitto -c /config/mosquitto.conf
-    ports:
-      - 8080:8080
-    networks:
-      - fullstack
-    volumes:
-      - ./config:/config
+  # mqtt:
+  #   image: 'eclipse-mosquitto'
+  #   container_name: 'mqtt'
+  #   command: mosquitto -c /config/mosquitto.conf
+  #   ports:
+  #     - 8080:8080
+  #   networks:
+  #     - fullstack
+  #   volumes:
+  #     - ./config:/config
 
 volumes:
   config:

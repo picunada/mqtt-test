@@ -1,90 +1,37 @@
 <script lang="ts">
   import { browser } from '$app/environment'
-  import * as mqtt from 'mqtt'
-  import { onDestroy, onMount } from 'svelte'
+  import { onDestroy, onMount, tick } from 'svelte'
   import { writable } from 'svelte/store'
-
-  let power = writable(0)
-  let received = 0
+  import MQTTClient from './mqtt'
 
   // mqtt
-  let client: mqtt.MqttClient
+  let mqttClient: MQTTClient
 
   // subscribe
   onMount(() => {
     if (browser) {
-      client = mqtt.connect('ws://localhost:8080', { clientId: 'mqtt-tester' + Math.random().toString(16).substring(2, 8), keepalive: 100 })
-      client.on('connect', () => {
-        if (client.connected === true) {
-          client.subscribe(
-            'test',
-            {
-              qos: 1,
-              rap: true,
-              rh: 1,
-            },
-            (err, granted) => {
-              if (err) {
-                console.log('received error: ', err)
-              } else {
-                console.log('granted on subscribe: ', granted)
-              }
-            }
-          )
-        }
-      })
-      // on error
-      client.on('error', function (error) {
-        console.log('Unable to connect: ' + error)
-      })
-      // on message
-      client.on('message', (topic, message) => {
-        // message is Buffer
-        console.log('received: ', message.toString())
-        received = parseInt(message.toString())
-        $power = received || 0
-      })
+      mqttClient = new MQTTClient('ws://test.mosquitto.org:8081/ws', { clientId: 'mqtt-tester' + Math.random().toString(16).substring(2, 8), keepalive: 100 })
     }
 
     setTimeout(() => {
-      if (!$power) {
-        $power = 1
+      if (!$mqttClient) {
+        $mqttClient = 1
       }
-    }, 2000)
+    }, 4000)
   })
 
   onDestroy(() => {
-    if (client) {
-      client.end()
+    if (mqttClient) {
+      mqttClient.client.end()
       console.log('destroyed')
-    }
-  })
-
-  function publish(topic: string, message: string) {
-    console.log('publishing: ', message)
-
-    if (client && client.connected === true) {
-      console.log('publishing topic: ' + topic + ', message: ' + message)
-      client.publish(topic, message, { qos: 1, retain: true })
-    }
-  }
-
-  let timer: NodeJS.Timeout
-
-  power.subscribe((value) => {
-    if (value != received) {
-      clearTimeout(timer)
-      timer = setTimeout(() => {
-        publish('test', JSON.stringify(value))
-      }, 500)
     }
   })
 </script>
 
-{#if $power}
-  <h2>{$power}%</h2>
+{#if $mqttClient}
+  <h2>{$mqttClient}%</h2>
   <div id="slider-container">
-    <input type="range" min="1" max="100" bind:value={$power} class="slider" id="myRange" />
+    <input type="range" min="1" max="100" bind:value={$mqttClient} class="slider" id="myRange" />
   </div>
 {:else}
   <div class="loader" />
