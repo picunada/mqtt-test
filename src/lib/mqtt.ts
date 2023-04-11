@@ -1,12 +1,13 @@
 import * as mqtt from 'mqtt'
-import { writable, type Subscriber, type Writable } from 'svelte/store'
+import { writable, type Subscriber, type Unsubscriber, type Writable } from 'svelte/store'
 
 interface IMQTTClient {
   client: mqtt.MqttClient
   power: Writable<number>
 
   publish(topic: string, message: string): void
-  subscribe(run: Subscriber<number>): void
+  subscribe(run: Subscriber<number>): Unsubscriber
+  set(value: number): void
 }
 
 export default class MQTTClient implements IMQTTClient {
@@ -72,7 +73,7 @@ export default class MQTTClient implements IMQTTClient {
     }
   }
   
-  public subscribe(run: Subscriber<number>) {
+  public subscribe(run: Subscriber<number>): Unsubscriber {
     return this.power.subscribe(run)
   }
 
